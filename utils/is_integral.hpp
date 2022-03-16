@@ -1,6 +1,8 @@
 #ifndef IS_INTEGRAL_HPP
 # define IS_INTEGRAL_HPP
 
+# include <stdint.h>
+
 namespace ft {
 	template <class T, bool v>
 	struct integral_constant {
