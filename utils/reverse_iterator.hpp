@@ -93,11 +93,6 @@ namespace ft {
 						return lhs.base() < rhs.base();
 					}
 	template < typename Iter >
-	bool operator<( const ft::reverse_iterator<Iter>& lhs,
-					const ft::reverse_iterator<Iter>& rhs ) {
-						return lhs.base() < rhs.base();
-					}
-	template < typename Iter >
 	bool operator<=( const ft::reverse_iterator<Iter>& lhs,
 					  const ft::reverse_iterator<Iter>& rhs ) {
 						return lhs.base() <= rhs.base();
