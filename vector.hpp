@@ -6,6 +6,7 @@
 # include "./utils/random_access_iterator.hpp"
 # include "./utils/is_integral.hpp"
 # include "./utils/enable_if.hpp"
+# include "./utils/lexicographical_compare.hpp"
 
 namespace ft {
 	template< class T, class Allocator = std::allocator<T> >
@@ -240,18 +241,191 @@ namespace ft {
 				len = 0 ;
 			}
 
-			// iterator insert( iterator pos, const T& value ) {
+			iterator insert( iterator pos, const T& value ) {
+				if (len + 1 > cap) {
+					size_type new_cap = cap * 2;
+					this->reserve(new_cap);
+				}
+				if (pos >= end()) {
+					alloc.construct(fin, value);
+				}
+				else {
+					value_type* tmp = fin;
+					for (size_type i = len; i < len + 1; i--) {
+						alloc.construct(tmp, *(tmp - 1));
+						tmp--;
+						alloc.destroy(tmp);
+						if (pos == &(*tmp))
+							break;
+					}
+					alloc.construct(tmp, value);
+				}
+				len++;
+				fin++;
+				return pos ;
+			}
+			void insert( iterator pos, size_type count, const T& value ) {
+				while (len + count > cap) {
+					size_type new_cap = cap * 2;
+					this->reserve(new_cap);
+				}
+				if (pos >= end())
+					pos = fin;
+				value_type* tmp = fin;
+				for (size_type i = len; i < len + 1; i--) {
+						alloc.construct(tmp, *(tmp - 1));
+						tmp--;
+						alloc.destroy(tmp);
+						if (pos == &(*tmp))
+							break;
+				}
+				for (size_type i = 0; i < count; i++) {
+					alloc.construct(tmp + i, value);
+				}
+				len = len + count;
+				fin = fin + count;
+			}
+			template< class InputIt >
+			void insert( iterator pos, InputIt first, InputIt last ) {
+				difference_type	diff = ft::distance<InputIt>(first, last);
+				size_type	itlen = static_cast<size_type>(diff);
+				while (len + itlen > cap) {
+					size_type new_cap = cap * 2;
+					this->reserve(new_cap);
+				}
+				if (pos >= end())
+					pos = fin;
+				value_type* tmp = fin;
+				for (size_type i = len; i < len + 1; i--) {
+						alloc.construct(tmp, *(tmp - 1));
+						tmp--;
+						alloc.destroy(tmp);
+						if (pos == &(*tmp))
+							break;
+				}
+				for (size_type i = 0; i < itlen; i++, first++) {
+					alloc.construct(tmp + i, *first);
+				}
+				len = len + itlen;
+				fin = fin + itlen;
+			}
 
-			// }
-			// void insert( iterator pos, size_type count, const T& value ) {
+			iterator erase( iterator pos ) {
+				if (fin < pos)
+					return pos;
+				value_type* tmp = &(*pos);
+				for (; tmp < fin; tmp++) {
+					alloc.destroy(tmp);
+					alloc.construct(tmp, *(tmp + 1));
+				}
+				alloc.destroy(tmp);
+				len--;
+				fin--;
+				return pos;
+			}
+			iterator erase( iterator first, iterator last ) {
+				if (fin < first)
+					return last;
+				if (fin < last)
+					last = fin;
+				difference_type	diff = ft::distance<iterator>(first, last);
+				len = len - diff;
+				diff = ft::distance<iterator>(start, first);
+				size_type	itpos = static_cast<size_type>(diff);
+				for (; first != last; first++)
+					alloc.distroy(first);
+				for (; last < fin; last++, itpos++) {
+					if (this->start + itpos)
+						alloc.destroy(start + itpos);
+					alloc.construct(start + itpos, *last);
+				}
+				return iterator(start + diff);
+			}
 
-			// }
-			// template< class InputIt >
-			// void insert( iterator pos, InputIt first, InputIt last ) {
+			void push_back( const T& value ) {
+				if (len + 1 > cap) {
+					size_type new_cap = cap * 2;
+					this->reserve(new_cap);
+				}
+				this->insert(end(), value);
+			}
 
-			// }
+			void pop_back() {
+				if (len == 0)
+					return ;
+				this->erase(end() - 1);
+			}
 
+			void resize( size_type count, T value = T() ) {
+				if (size() > count) {
+					while (size() != count)
+						pop_back();
+				}
+				else if (size() < count) {
+					while (size() != count)
+						push_back(value);
+				} 
+			}
+
+			void swap( vector& other ) {
+				value_type*		t_start = other.start;
+				value_type* 	t_fin = other.fin;
+				allocator_type	t_alloc = other.alloc;
+				size_type		t_cap = other.cap;
+				size_type		t_len = other.len;
+
+				other.alloc = this->alloc;
+				other.start = this->start;
+				other.fin = this->fin;
+				other.cap = this->cap;
+				other.len = this->len;
+
+				this->alloc = t_alloc;
+				this->start = t_start;
+				this->fin = t_fin;
+				this->cap = t_cap;
+				this->len = t_len;
+			}
 	};
+
+	template< class T, class Alloc >
+	bool operator==( const std::vector<T,Alloc>& lhs, const std::vector<T,Alloc>& rhs ) {
+		if (lhs.size() != rhs.size())
+			return false;
+		typedef	ft::vector<T>::iterator	first1 = lhs.begin();
+		typedef	ft::vector<T>::iterator	first2 = rhs.begin();
+		for (; first1 != lhs.end(); first1++, first2++) {
+			if (first1 != first2)
+				return false;
+		}
+		return true;
+	}
+	template< class T, class Alloc >
+	bool operator!=( const std::vector<T,Alloc>& lhs, const std::vector<T,Alloc>& rhs ) {
+		return !(lhs == rhs);
+	}
+	template< class T, class Alloc >
+	bool operator<( const std::vector<T,Alloc>& lhs, const std::vector<T,Alloc>& rhs ) {
+		return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+	}
+	template< class T, class Alloc >
+	bool operator<=( const std::vector<T,Alloc>& lhs, const std::vector<T,Alloc>& rhs ) {
+		return (!lhs > rhs);
+	}
+	template< class T, class Alloc >
+	bool operator>( const std::vector<T,Alloc>& lhs, const std::vector<T,Alloc>& rhs ) {
+		return (ft::lexicographical_compare(rhs.begin(), rhs.end(), lhs.begin(), lhs.end()));
+	}
+	template< class T, class Alloc >
+	bool operator>=( const std::vector<T,Alloc>& lhs, const std::vector<T,Alloc>& rhs ) {
+		return (!lhs < rhs);
+	}
+	template< class T, class Alloc >
+	void swap( vector<T,Alloc>& lhs, vector<T,Alloc>& rhs ) {
+		vector<T, Alloc>	tmp(rhs);
+		tmp.swap(lhs);
+		tmp.swap(rhs);
+	}
 }
 
 #endif
