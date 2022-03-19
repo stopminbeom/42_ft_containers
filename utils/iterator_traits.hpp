@@ -51,7 +51,17 @@ namespace	ft
 		typedef random_access_iterator_tag	iterator_category;
 	};
 
-	
+	template < typename Iter>
+	typename Iter::difference_type	distance( Iter first, Iter last )
+	{
+		typename	Iter::difference_type	result = 0;
+		Iter		start(first);
+		while (start != last) {
+			++start;
+			++result;
+		}
+		return result;
+	}
 }
 
 #endif
