@@ -49,7 +49,7 @@ namespace ft {
 			}
 			template < class InputIt >
 			vector( InputIt first, InputIt last, const Allocator& _alloc = Allocator(),  
-					typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type = 0 )
+					typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type* = 0 )
 			: alloc(_alloc) {
 				difference_type	diff = ft::distance<InputIt>(first, last);
 				len = static_cast<size_type>(diff);
@@ -65,7 +65,11 @@ namespace ft {
 				}
 			}
 			vector( const vector& other ) : start(nullptr), fin(nullptr), alloc(other.alloc), cap(other.cap), len(other.len) {
-				this->insert(this->begin(), other.begin(), other.end());
+				start = alloc.allocate(cap);
+				fin = start;
+				value_type	*tmp = other.start;
+				for (; tmp != other.fin; tmp++, fin++)
+					alloc.construct(fin, *tmp);
 			}
 			~vector() {
 				clear();
@@ -74,14 +78,9 @@ namespace ft {
 			}
 
 			vector& operator=( const vector& other ) {
-				alloc = other.alloc;
-				cap = other.cap;
-				len = other.len;
-				start = alloc.allocate(cap);
-				fin = start;
-				pointer	tmp = other.start;
-				for (; fin != other.fin; fin++, tmp++) {
-					alloc.construct(fin, *tmp);
+				if (*this != other) {
+					clear();
+					assign(other.begin(), other.end());
 				}
 				return *this;
 			}
@@ -104,7 +103,7 @@ namespace ft {
 				}
 			}
 			template< class InputIt >
-			void assign( InputIt first, InputIt last, typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type = 0 ) {
+			void assign( InputIt first, InputIt last, typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type* = 0 ) {
 				clear();
 				difference_type	diff = ft::distance<InputIt>(first, last);
 				size_type tmp = static_cast<size_type>(diff);
@@ -219,11 +218,8 @@ namespace ft {
 				
 				new_start = alloc.allocate(new_cap);
 				new_fin = new_start + len;
-				while (start != fin) {
-					alloc.construct(fin, *start);
-					start++;
-					fin++;
-				}
+				for (size_type i = 0; start + i != fin; i++)
+					alloc.construct(new_start + i, *(start + i));
 				alloc.deallocate(start, cap);
 				cap = new_cap;
 				start = new_start;
@@ -256,45 +252,37 @@ namespace ft {
 					throw	std::length_error("vector::insert");
 				size_type	pos_len = &(*pos) - start;
 				while (len + count > cap) {
-					size_type new_cap = (cap * 2 > 0)? cap * 2 : 1;
+					size_type new_cap = (cap * 2 > 0)? (cap * 2) : 1;
 					this->reserve(new_cap);
 				}
 				fin += count;
-				value_type*	tmp = fin;
-				for (size_type i = 0; i < (len - pos_len - i); i++)
-					alloc.construct(tmp - 1, *(fin - i));
+				for (size_type i = 0; i < (len - pos_len); i++) {
+					if (len != pos_len)
+						alloc.construct((fin - 1 - i), *(fin - i - 1 - count));
+				}
 				for (size_type j = 0; j < count ; j++)
 					alloc.construct(start + j + pos_len, value);
 				len += count;
 			}
 			template< class InputIt >
-			void insert( iterator pos, InputIt first, InputIt last, typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type = 0 ) {
+			void insert( iterator pos, InputIt first, InputIt last, typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type* = 0 ) {
+				size_type	pos_len = &(*pos) - start;
 				difference_type	diff = ft::distance<InputIt>(first, last);
 				size_type	itlen = static_cast<size_type>(diff);
 				while (len + itlen > cap) {
-					size_type new_cap = (cap * 2 > 0)? cap * 2 : 1;
+					size_type new_cap = (cap * 2 > 0)? (cap * 2) : 1;
 					this->reserve(new_cap);
 				}
-				if (pos >= end())
-					pos = fin;
-				value_type* tmp = fin;
-				for (size_type i = len; i < len + 1; i--) {
-						alloc.construct(tmp, *(tmp - 1));
-						tmp--;
-						alloc.destroy(tmp);
-						if (&(*pos) > tmp)
-							break;
-				}
-				for (size_type i = 0; i < itlen; i++, first++) {
-					alloc.construct(tmp + i, *first);
-				}
-				len = len + itlen;
-				fin = fin + itlen;
+				fin += itlen;
+				for (size_type i = 0; i < (len - pos_len); i++)
+					alloc.construct(fin - 1 - i, *(fin - i - 1 - itlen));
+				
+				for (size_type j = 0; first != last ; j++, first++)
+					alloc.construct(start + j + pos_len, *first);
+				len += itlen;
 			}
 
 			iterator erase( iterator pos ) {
-				if (fin < &(*pos))
-					return pos;
 				value_type* tmp = &(*pos);
 				for (; tmp < fin; tmp++) {
 					alloc.destroy(tmp);
@@ -306,29 +294,20 @@ namespace ft {
 				return pos;
 			}
 			iterator erase( iterator first, iterator last ) {
-				if (fin < first)
-					return last;
-				if (fin < last)
-					last = fin;
+				value_type* tmp = &(*first);
 				difference_type	diff = ft::distance<iterator>(first, last);
-				len = len - diff;
-				diff = ft::distance<iterator>(start, first);
-				size_type	itpos = static_cast<size_type>(diff);
-				for (; first != last; first++)
-					alloc.distroy(first);
-				for (; last < fin; last++, itpos++) {
-					if (this->start + itpos)
-						alloc.destroy(start + itpos);
-					alloc.construct(start + itpos, *last);
+				size_type d_tmp = static_cast<size_type>(diff);
+				for (; tmp < fin; tmp++) {
+					alloc.destroy(tmp);
+					if (tmp + diff)
+						alloc.construct(tmp, *(tmp + diff));
 				}
-				return iterator(start + diff);
+				len -= d_tmp;
+				fin -= diff;
+				return first;
 			}
 
 			void push_back( const T& value ) {
-				if (len + 1 > cap) {
-					size_type new_cap = cap * 2;
-					this->reserve(new_cap);
-				}
 				this->insert(end(), value);
 			}
 
@@ -379,7 +358,7 @@ namespace ft {
 		typename	vector<const T, Alloc>::iterator	last1 = lhs.end();
 		typename	vector<const T, Alloc>::iterator	last2 = rhs.end();
 
-		typename 	ft::vector<const T, Alloc>::difference_type	diff1 = ft::distance<typename vector<const T,Alloc>::iterator>(first1, last1);
+		typename 	vector<const T, Alloc>::difference_type	diff1 = ft::distance<typename vector<const T,Alloc>::iterator>(first1, last1);
 		typename	vector<const T, Alloc>::difference_type	diff2 = ft::distance<typename vector<const T,Alloc>::iterator>(first2, last2);
 
 		if (diff1 != diff2)
