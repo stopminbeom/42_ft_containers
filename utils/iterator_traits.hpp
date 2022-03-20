@@ -13,6 +13,7 @@ namespace	ft
 	
 	template <class Category, class T, class Distance = ptrdiff_t,
         	class Pointer = T*, class Reference = T&>
+			
 	struct iterator {
 		typedef T			value_type;
 		typedef Distance	difference_type;
@@ -51,7 +52,7 @@ namespace	ft
 		typedef random_access_iterator_tag	iterator_category;
 	};
 
-	template < typename Iter>
+	template < typename Iter >
 	typename Iter::difference_type	distance( Iter first, Iter last )
 	{
 		typename	Iter::difference_type	result = 0;
