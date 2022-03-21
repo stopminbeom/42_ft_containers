@@ -22,8 +22,8 @@ namespace ft {
 			typedef	typename	Allocator::const_pointer	const_pointer;
 			typedef	ft::random_access_iterator<T>			iterator;
 			typedef	ft::random_access_iterator<const T>		const_iterator;
-			typedef	ft::reverse_iterator<T>					reverse_iterator;
-			typedef	ft::reverse_iterator<const T>			const_reverse_iterator;
+			typedef	ft::reverse_iterator<iterator>			reverse_iterator;
+			typedef	ft::reverse_iterator<const_iterator>	const_reverse_iterator;
 
 		private :
 			value_type*		start; // 시작지점 = begin()
@@ -355,16 +355,10 @@ namespace ft {
 			return false;
 		typename	vector<const T, Alloc>::iterator	first1 = lhs.begin();
 		typename	vector<const T, Alloc>::iterator	first2 = rhs.begin();
-		typename	vector<const T, Alloc>::iterator	last1 = lhs.end();
-		typename	vector<const T, Alloc>::iterator	last2 = rhs.end();
+		typename	vector<const T, Alloc>::iterator	lst = lhs.end();
 
-		typename 	vector<const T, Alloc>::difference_type	diff1 = ft::distance<typename vector<const T,Alloc>::iterator>(first1, last1);
-		typename	vector<const T, Alloc>::difference_type	diff2 = ft::distance<typename vector<const T,Alloc>::iterator>(first2, last2);
-
-		if (diff1 != diff2)
-			return false;
-		for (; first1 != lhs.end(); first1++, first2++) {
-			if (first1 != first2)
+		for (; first1 != lst; first1++, first2++) {
+			if (*first1 != *first2)
 				return false;
 		}
 		return true;
@@ -379,7 +373,7 @@ namespace ft {
 	}
 	template< class T, class Alloc >
 	bool operator<=( const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs ) {
-		return (!lhs > rhs);
+		return (!(lhs > rhs));
 	}
 	template< class T, class Alloc >
 	bool operator>( const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs ) {
@@ -387,7 +381,7 @@ namespace ft {
 	}
 	template< class T, class Alloc >
 	bool operator>=( const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs ) {
-		return (!lhs < rhs);
+		return (!(lhs < rhs));
 	}
 	template< class T, class Alloc >
 	void swap( vector<T,Alloc>& lhs, vector<T,Alloc>& rhs ) {
