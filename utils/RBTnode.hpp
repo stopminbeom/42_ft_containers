@@ -1,5 +1,5 @@
-#ifndef RBT_HPP
-# define RBT_HPP
+#ifndef RBTNODE_HPP
+# define RBTNODE_HPP
 
 # include <memory>
 
