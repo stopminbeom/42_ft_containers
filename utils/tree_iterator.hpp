@@ -4,6 +4,7 @@
 # include "RBTnode.hpp"
 # include "iterator_traits.hpp"
 # include "pair.hpp"
+# include "ft_nullptr.hpp"
 
 namespace ft {
 	template < typename Node, class Compare > // 말 그대로 노드 value_type으로 pair를 들고옴. 트리에서 사용되는 노드 그 자체
@@ -48,10 +49,10 @@ namespace ft {
 			}
 
 			tree_iterator&	operator++() {
-				Node* tmp = nullptr;
-				if (node_pointer->r_child->value != nullptr) {
+				Node* tmp = ft_nullptr;
+				if (node_pointer->r_child->value != ft_nullptr) {
 					tmp = node_pointer->r_child;
-					while (tmp->l_child->value != nullptr)
+					while (tmp->l_child->value != ft_nullptr)
 						tmp = tmp->l_child;
 				}
 				else {
@@ -68,12 +69,12 @@ namespace ft {
 			tree_iterator&	operator++(int) { tree_iterator tmp = *this; ++(*this); return tmp; }
 
 			tree_iterator&	operator--() {
-				Node* tmp = nullptr;
-				if (node_pointer->value == nullptr)
+				Node* tmp = ft_nullptr;
+				if (node_pointer->value == ft_nullptr)
 					tmp = node_pointer->parent;
-				else if (node_pointer->l_child->value != nullptr)
+				else if (node_pointer->l_child->value != ft_nullptr)
 					tmp = node_pointer->l_child;
-					while (tmp->r_child->value != nullptr)
+					while (tmp->r_child->value != ft_nullptr)
 						tmp = tmp->r_chlid;
 				else {
 					tmp = node_pointer->parent;

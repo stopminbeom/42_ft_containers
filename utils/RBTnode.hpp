@@ -2,6 +2,7 @@
 # define RBTNODE_HPP
 
 # include <memory>
+# include "ft_nullptr.hpp"
 
 namespace ft {
 	enum RBcolor { RED = false, BLACK = true };
@@ -20,8 +21,8 @@ namespace ft {
 			node		r_child;
 			Alloc		alloc;
 			
-			RBTnode() : value(nullptr), color(RED), parent(nullptr), l_child(nullptr), r_child(nullptr), alloc(Alloc()) {}
-			RBTnode(const T& val) : value(nullptr), color(RED), parent(nullptr), l_child(nullptr), r_child(nullptr), alloc(Alloc()) {
+			RBTnode() : value(ft_nullptr), color(RED), parent(ft_nullptr), l_child(ft_nullptr), r_child(ft_nullptr), alloc(Alloc()) {}
+			RBTnode(const T& val) : value(ft_nullptr), color(RED), parent(ft_nullptr), l_child(ft_nullptr), r_child(ft_nullptr), alloc(Alloc()) {
 				value = alloc.allocate(1);
 				alloc.construct(value, val);
 			}

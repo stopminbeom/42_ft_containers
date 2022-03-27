@@ -2,6 +2,7 @@
 # define RANDOM_ACCESS_ITERATOR_HPP
 
 # include "iterator_traits.hpp"
+# include "ft_nullptr.hpp"
 
 namespace ft {
 	template < typename T >
@@ -17,7 +18,7 @@ namespace ft {
 			pointer	current;
 		
 		public :
-			random_access_iterator() : current(nullptr) {}
+			random_access_iterator() : current(ft_nullptr) {}
 			random_access_iterator( pointer t ) : current(t) {}
 			random_access_iterator( const random_access_iterator& other ) { current = other.current; }
 			~random_access_iterator() {};

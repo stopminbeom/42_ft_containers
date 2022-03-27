@@ -7,6 +7,7 @@
 # include "./utils/is_integral.hpp"
 # include "./utils/enable_if.hpp"
 # include "./utils/lexicographical_compare.hpp"
+# include "./utils/ft_nullptr.hpp"
 
 namespace ft {
 	template< class T, class Allocator = std::allocator<T> >
@@ -34,7 +35,7 @@ namespace ft {
 
 		public :
 			explicit vector( const Allocator& _alloc = allocator_type() )
-			: start(nullptr), fin(nullptr), alloc(_alloc), cap(0), len(0) {}
+			: start(ft_nullptr), fin(ft_nullptr), alloc(_alloc), cap(0), len(0) {}
 			explicit vector( size_type count, const T& value = T(), const Allocator& _alloc = Allocator())
 			: alloc(_alloc), cap(0), len(count) {
 				size_type	i = 1;
@@ -64,7 +65,7 @@ namespace ft {
 					alloc.construct(fin, *first);
 				}
 			}
-			vector( const vector& other ) : start(nullptr), fin(nullptr), alloc(other.alloc), cap(other.cap), len(other.len) {
+			vector( const vector& other ) : start(ft_nullptr), fin(ft_nullptr), alloc(other.alloc), cap(other.cap), len(other.len) {
 				start = alloc.allocate(cap);
 				fin = start;
 				value_type	*tmp = other.start;
