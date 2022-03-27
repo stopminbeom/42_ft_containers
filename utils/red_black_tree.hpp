@@ -72,8 +72,34 @@ namespace ft {
 			size_type	max_size() const { return _node_alloc.max_size(); }
 
 			ft::pair<node_type*, bool> insert(const value_type& val, node_type* hint = nullptr) {
+				node_type*	new_node = make_node(val);
+				node_type*	position = _root;
 
+				if (_size == 0) {
+					_root = new_node;
+					_root->l_child = _nil;
+					_root->r_child = _nil;
+					_root->parent = _nil;
+					_root->color = BLACK;
+					_nil->parent = _root;
+					_size++;
+					return ft::make_pair<_root, true>;
+				}
+				if (hint != nullptr && hint->value != nullptr)
+					position = check_hint(val, hint);
+				ft::pair<node_type*, bool> is_valid = get_position(position, new_node);
+				if (is_valid.second == false) {
+					_node_alloc.destroy(new_node);
+					_node_alloc.deallocate(new_node, 1);
+					return is_valid;
+				}
+				insert_case1(new_node);
+				_size++;
+				_nil->parent = get_max_value_node();
+				return ft::make_pair(new_node, true);
 			}
+
+			size_type	erase // 여기부터 작업해야함
 
 			void	clear(node_type* node = nullptr) {
 				if (node == nullptr)
@@ -111,6 +137,24 @@ namespace ft {
 				ret->parent = ret;
 				ret->value = nullptr;
 				return ret;
+			}
+
+			node_type*	make_node(const value_type& val) {
+				node_type*	ret = _node_alloc.allocate(1);
+				_node_alloc.construct(ret, node_type(val));
+				return ret;
+			}
+
+			node_type*	check_hint(value_type val, node_type* hint) {
+				if (_comp(*hint->value, *_root->value) && _comp(val, *hint->value))
+					return hint;
+				else if (_comp(*hint->value, *_root->value) && _comp(*hint->value, val))
+					return _root;
+				else if (_comp(*root->value, *hint->value) && _comp(val, *hint->value))
+					return _root;
+				else if (_comp(*root->value, *hint->value) && _comp(*hint->value, val))
+					return hint;
+				return _root;
 			}
 
 			node_type*	get_max_value_node() const {

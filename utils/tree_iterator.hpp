@@ -3,6 +3,7 @@
 
 # include "RBTnode.hpp"
 # include "iterator_traits.hpp"
+# include "pair.hpp"
 
 namespace ft {
 	template < typename Node, class Compare > // 말 그대로 노드 value_type으로 pair를 들고옴. 트리에서 사용되는 노드 그 자체
