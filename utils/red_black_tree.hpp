@@ -5,7 +5,7 @@
 # include "tree_iterator.hpp"
 # include "reverse_iterator.hpp"
 # include "less.hpp"
-# include "ft_nullptr.hpp"
+# include "enable_if.hpp"
 
 namespace ft {
 	template < typename T, typename Compare = ft::less<T>, typename Alloc = std::allocator<T> >
@@ -26,25 +26,25 @@ namespace ft {
 			typedef typename	Alloc::template rebind<node_type>::other	node_allocator_type; 
 			// T가 아닌 것을 할당하기 위해 사용함. rebind는 c++17에서는 사용중지 권고이며, 이후 버전에서는 정의하지 않아도 컴파일이 된다! (하지만 여기는 98이지)
 
-			rbt() : _root(ft_nullptr), _nil(ft_nullptr), _size(0), _comp(value_comp()), _node_alloc(node_allocator_type()) {
+			red_black_tree() : _root(ft_nullptr), _nil(ft_nullptr), _size(0), _comp(value_comp()), _node_alloc(node_allocator_type()) {
 				_nil = make_nil();
 				_root = _nil;
 			}
 
-			rbt(const rbt& other) : _root(ft_nullptr), _nil(ft_nullptr), _size(0), _comp(value_comp()), _node_alloc(node_allocator_type()) {
+			red_black_tree(const rbt& other) : _root(ft_nullptr), _nil(ft_nullptr), _size(0), _comp(value_comp()), _node_alloc(node_allocator_type()) {
 				_nil = make_nil();
 				copy(other);
 				_nil->parent = get_max_value_node();
 			}
 
-			~rbt() {
+			~red_black_tree() {
 				clear();
 				_node_alloc.destroy(_nil);
 				_node_alloc.deallocate(_nil, 1);
 			}
 
 			rbt&	operator==(const rbt* t) {
-				if (this != &x)
+				if (this != &t)
 					copy(t);
 				return *this;
 			}
@@ -166,6 +166,26 @@ namespace ft {
 				return ret;
 			}
 
+			node_type*	upper_bound(const value_type& val) const {
+				iterator it(get_begin());
+				iterator ite(get_end());
+				while (it != ite)
+					if (_comp(val, *it))
+						break;
+					it++;
+				return it.base();
+			}
+
+			node_type*	lower_bound(const value_type& val) const {
+				iterator it(get_begin());
+				iterator ite(get_end());
+				while (it != ite)
+					if (!_comp(*it, val))
+						break;
+					it++;
+				return it.base();
+			}
+
 		private :
 			node_type*			_root;
 			node_type*			_nil;
@@ -195,9 +215,9 @@ namespace ft {
 					return hint;
 				else if (_comp(*hint->value, *_root->value) && _comp(*hint->value, val))
 					return _root;
-				else if (_comp(*root->value, *hint->value) && _comp(val, *hint->value))
+				else if (_comp(*_root->value, *hint->value) && _comp(val, *hint->value))
 					return _root;
-				else if (_comp(*root->value, *hint->value) && _comp(*hint->value, val))
+				else if (_comp(*_root->value, *hint->value) && _comp(*hint->value, val))
 					return hint;
 				return _root;
 			}
@@ -209,7 +229,22 @@ namespace ft {
 				return tmp;
 			}
 
-			node_type*	sibling(node_type* node) {
+			node_type*	get_grandparent(node_type* node) {
+				if (node != ft_nullptr && node->parent != ft_nullptr)
+					return node->parent->parent;
+				return ft_nullptr;
+			}
+
+			node_type*	get_uncle(node_type* node) {
+				node_type*	grand = get_grandparent(node);
+				if (grand == ft_nullptr)
+					return ft_nullptr;
+				if (grand->l_child == node->parent)
+					return grand->r_child;
+				return grand->l_child;
+			}
+
+			node_type*	get_sibling(node_type* node) {
 				if (node == node->parent->l_child)
 					return node->parent->r_child;
 				return node->parent->r_child;
@@ -291,7 +326,37 @@ namespace ft {
 					m->parent->r_child = c;
 			}
 
-
+			ft::pair<node_type*, bool> get_position(node_type* position, node_type* node) {
+				while (position->value != ft_nullptr) {
+					if (_comp(*node->value, *position->value)) {
+						if (position->l_child->value == ft_nullptr) {
+							position->l_child = node;
+							node->parent = position;
+							node->l_child = _nil;
+							node->r_child = _nil;
+							node->color = RED;
+							break;
+						}
+						else
+							position = position->l_child;
+					}
+					else if (_comp(*position->value, *node->value)) {
+						if (position->r_child->value == ft_nullptr) {
+							position->r_child = node;
+							node->parent = position;
+							node->l_child = _nil;
+							node->r_child = _nil;
+							node->color = RED;
+							break;
+						}
+						else
+							position = position->r_child;
+					}
+					else
+						return ft::make_pair(position, false);
+				}
+				return ft::make_pair(position, true);
+			}
 
 
 	};

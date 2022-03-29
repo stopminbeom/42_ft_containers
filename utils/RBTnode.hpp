@@ -35,17 +35,17 @@ namespace ft {
 			}
 
 			node operator= (const node& other) {
-				if (*this = other)
+				if (*this == other)
 					return *this;
-				this->value = other.value;
-				this->color = other.color;
-				this->parent = other.parent;
-				this->l_child = other.l_child;
-				this->r_child = other.r_child;
+				this->value = other->value;
+				this->color = other->color;
+				this->parent = other->parent;
+				this->l_child = other->l_child;
+				this->r_child = other->r_child;
 				return *this;
 			}
 
-			bool operator== (const RTBnode& other) {
+			bool operator== (const RBTnode& other) {
 				if (this->value == other.value)
 					return true;
 				return false;
