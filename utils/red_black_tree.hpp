@@ -8,11 +8,11 @@
 # include "enable_if.hpp"
 
 namespace ft {
-	template < typename T, typename Compare = ft::less<T>, typename Alloc = std::allocator<T> >
+	template < typename T, typename Compare = ft::less<T>, typename Alloc = std::allocator<T>, 
+						   typename Node = ft::RBTnode<T>, typename Node_Alloc = std::allocator<Node> >
 	class red_black_tree {
 		public :
-			typedef	red_black_tree											rbt;
-			typedef	T														value_type;
+			typedef	T														value_type; // pair
 			typedef	T*														pointer;
 			typedef const T*												const_pointer;
 			typedef T&														reference;
@@ -20,11 +20,8 @@ namespace ft {
 			typedef Compare													value_comp;
 			typedef	Alloc													allocator_type;
 			typedef	size_t													size_type;
-			typedef	ft::RBTnode<T>											node_type;
-			typedef typename	ft::tree_iterator<T>						iterator;
-			typedef typename	ft::tree_iterator<const T>					const_iterator;
-			typedef typename	Alloc::template rebind<node_type>::other	node_allocator_type; 
-			// T가 아닌 것을 할당하기 위해 사용함. rebind는 c++17에서는 사용중지 권고이며, 이후 버전에서는 정의하지 않아도 컴파일이 된다! (하지만 여기는 98이지)
+			typedef typename	ft::tree_iterator<Node, Compare>			iterator; // node를 보내서 쓰는 iterator
+			typedef typename	ft::const_tree_iterator<Node, Compare>		const_iterator;
 
 			red_black_tree() : _root(ft_nullptr), _nil(ft_nullptr), _size(0), _comp(value_comp()), _node_alloc(node_allocator_type()) {
 				_nil = make_nil();
@@ -84,7 +81,7 @@ namespace ft {
 					_root->color = BLACK;
 					_nil->parent = _root;
 					_size++;
-					return ft::make_pair<_root, true>;
+					return ft::make_pair(iterator(new_node, _nil), false); // 수정 필요
 				}
 				if (hint != ft_nullptr && hint->value != ft_nullptr)
 					position = check_hint(val, hint);
@@ -97,7 +94,7 @@ namespace ft {
 				insert_case1(new_node);
 				_size++;
 				_nil->parent = get_max_value_node();
-				return ft::make_pair(new_node, true);
+				return ft::make_pair(iterator(new_node, _nil), true); // 수정 필요
 			}
 
 			size_type	erase (node_type* node) {
@@ -147,7 +144,7 @@ namespace ft {
 				if (node->value != ft_nullptr) {
 					if (node == _root)
 						_root = _nil;
-					_node_alloc.destory(node);
+					_node_alloc.destroy(node);
 					_node_alloc.deallocate(node, 1);
 					_size--;
 				}
@@ -357,8 +354,6 @@ namespace ft {
 				}
 				return ft::make_pair(position, true);
 			}
-
-
 	};
 }
 

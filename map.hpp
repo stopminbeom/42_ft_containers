@@ -5,6 +5,7 @@
 # include "./utils/red_black_tree.hpp"
 # include "./utils/enable_if.hpp"
 # include "./utils/tree_iterator.hpp"
+# include "./utils/is_integral.hpp"
 
 namespace ft {
 	template< class Key, class T, class Compare = ft::less<Key>, class Allocator = std::allocator<ft::pair<const Key, T> > >
@@ -20,11 +21,11 @@ namespace ft {
 			typedef	value_type&										reference;
 			typedef	const value_type&								const_reference;
 			typedef typename	Allocator::pointer					pointer;
-			typedef typename	Allocator::const_painter			const_painter;
-			typedef	ft::tree_iterator<T>							iterator;
-			typedef	ft::tree_iterator<const T>						const_iterator;
-			typedef	ft::reverse_iterator<T>							reverse_iterator;
-			typedef	ft::reverse_iterator<const T>					const_reverse_iterator;
+			typedef typename	Allocator::const_pointer			const_painter;
+			typedef	ft::tree_iterator<value_type>					iterator;
+			typedef	ft::const_tree_iterator<value_type>				const_iterator;
+			typedef	ft::reverse_iterator<iterator>					reverse_iterator;
+			typedef	ft::reverse_iterator<const_iterator>			const_reverse_iterator;
 			typedef ft::red_black_tree<value_type>					rbt;
 			typedef ft::RBTnode<value_type>							node_type;
 
@@ -48,7 +49,8 @@ namespace ft {
 			explicit map( const Compare& comp, const Allocator& alloc = Allocator() ) : _alloc(alloc), _comp(comp), _tree() {}
 			template< class InputIt >
 			map( InputIt first, InputIt last, const Compare& comp = Compare(), const Allocator& alloc = Allocator(),
-				typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type* = 0 ) : _alloc(alloc), _comp(comp), _tree() { insert(first, last); }
+				typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type* = 0 )
+			: _alloc(alloc), _comp(comp), _tree() { insert(first, last); }
 			map( const map& other ) : _alloc(other._alloc), _comp(other._comp), _tree() { *this = other; }
 			~map() {}
 

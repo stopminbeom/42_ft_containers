@@ -7,65 +7,46 @@
 namespace ft {
 	enum RBcolor { RED = false, BLACK = true };
 
-	template < typename T, typename Alloc = std::allocator<T> >
+	template < typename T >
 	struct RBTnode {
 		public :
-			typedef T			value_type;
+			typedef T			value_type;	// pair
 			typedef	RBcolor		color_type;
-			typedef	RBTnode*	node;
 
-			value_type	value;
+			value_type	value; // pair <key, mapped_type>
 			color_type	color;
-			node		parent;
-			node		l_child;
-			node		r_child;
-			Alloc		alloc;
+			RBTnode*	parent;
+			RBTnode*	l_child;
+			RBTnode*	r_child;
 			
-			RBTnode() : value(ft_nullptr), color(RED), parent(ft_nullptr), l_child(ft_nullptr), r_child(ft_nullptr), alloc(Alloc()) {}
-			RBTnode(const T& val) : value(ft_nullptr), color(RED), parent(ft_nullptr), l_child(ft_nullptr), r_child(ft_nullptr), alloc(Alloc()) {
-				value = alloc.allocate(1);
-				alloc.construct(value, val);
-			}
-			RBTnode(const RBTnode& other) : value(other.value), color(other.color), parent(other.parent), l_child(other.l_child), r_child(other.r_child), alloc(other.alloc) {}
-			~RBTnode() {
-				if (value) {
-					alloc.destroy(value);
-					alloc.deallocate(value, 1);
-				}
-			}
+			RBTnode() : value(ft_nullptr), color(RED), parent(ft_nullptr), l_child(ft_nullptr), r_child(ft_nullptr) {}
+			RBTnode(const T& val) : value(val), color(RED), parent(ft_nullptr), l_child(ft_nullptr), r_child(ft_nullptr) {}
+			RBTnode(const RBTnode& other) : value(other.value), color(other.color), parent(other.parent), l_child(other.l_child), r_child(other.r_child) {}
+			~RBTnode() {}
 
-			node operator= (const node& other) {
+			RBTnode operator= (const RBTnode& other) {
 				if (*this == other)
 					return *this;
-				this->value = other->value;
-				this->color = other->color;
-				this->parent = other->parent;
-				this->l_child = other->l_child;
-				this->r_child = other->r_child;
+				this->value = other.value;
+				this->color = other.color;
+				this->parent = other.parent;
+				this->l_child = other.l_child;
+				this->r_child = other.r_child;
 				return *this;
 			}
 
 			bool operator== (const RBTnode& other) {
-				if (this->value == other.value)
+				if (this->value == other->value)
 					return true;
 				return false;
 			}
 
 			bool operator!= (const RBTnode& other) {
-				if (this->value != other.value)
+				if (this->value != other->value)
 					return true;
 				return false;
 			}
 	};
-
-	template <class T1, class T2>
-	bool operator== (const RBTnode<T1>& lhs, const RBTnode<T2>& rhs) {
-		return lhs == rhs;
-	}
-	template <class T1, class T2>
-	bool operator!= (const RBTnode<T1>& lhs, const RBTnode<T2>& rhs) {
-		return lhs != rhs;
-	}
 }
 
 #endif

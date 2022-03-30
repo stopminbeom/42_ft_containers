@@ -236,15 +236,15 @@ namespace ft {
 				for (size_type i = 0; i < len; i++)
 				{
 					fin--;
-					alloc.destroy(fin) ;
+					alloc.destroy(fin);
 				}
-				len = 0 ;
+				len = 0;
 			}
 
 			iterator insert( iterator pos, const T& value ) {
 				size_type	pos_len = &(*pos) - start;
 				insert (pos, 1, value);
-				return start + pos_len; 
+				return start + pos_len;
 			}
 			void insert( iterator pos, size_type count, const T& value ) {
 				if (count < 1)
