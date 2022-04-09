@@ -39,6 +39,7 @@ namespace ft {
 				typedef	bool		result_type;
 				typedef	value_type	first_argument_type;
 				typedef	value_type	second_argument_type;
+				value_compare() : comp() {}
 				bool operator()( const value_type& lhs, const value_type& rhs ) const { return comp(lhs.first, rhs.first); }
 		};
 
@@ -76,7 +77,7 @@ namespace ft {
 			size_type max_size() const { return _tree.max_size(); }
 
 			mapped_type& operator[] (const key_type& k) {
-				return *(_tree.insert(ft::make_pair(k, mapped_type())).first).value->second;
+				return (*(_tree.insert(ft::make_pair(k, mapped_type())).first)).value->second;
 			}
 			
 			pair<iterator, bool> insert (const value_type& val) {
@@ -84,7 +85,7 @@ namespace ft {
 				return ft::make_pair(iterator(ret.first), ret.second);
 			}
 			iterator insert (iterator position, const value_type& val) {
-				return iterator(_tree.insert(val), position.base().first);
+				return iterator(_tree.insert(val, position.base()).first);
 			}
 			template <class InputIt>
 			void insert (InputIt first, InputIt last, typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type* = 0) {

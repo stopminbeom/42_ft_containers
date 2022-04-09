@@ -35,12 +35,12 @@ namespace ft {
 				_nil->parent = get_max_value_node();
 			}
 
-			void	copy (const red_black_tree& copy) {
+			void	copy(const red_black_tree& c) {
 				clear();
-				copy(copy._root);
+				copy(c._root);
 			}
 
-			void	copy (node_type* node) {
+			void	copy(node_type* node) {
 				if (node->value == ft_nullptr)
 					return;
 				insert(*node->value);

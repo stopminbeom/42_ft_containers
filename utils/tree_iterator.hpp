@@ -80,7 +80,7 @@ namespace ft {
 				_node = tmp;
 				return *this;
 			}
-			tree_iterator&	operator--(int) { tree_iterator tmp = *this; --(*this); return tmp; }
+			tree_iterator	operator--(int) { tree_iterator tmp = *this; --(*this); return tmp; }
 
 			bool	operator==( const tree_iterator& Iter ) { return _node == Iter._node; };
 			bool	operator!=( const tree_iterator& Iter ) { return _node != Iter._node; };
