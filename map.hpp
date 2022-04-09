@@ -13,35 +13,36 @@ namespace ft {
 	template< class Key, class T, class Compare = ft::less<Key>, class Allocator = std::allocator<ft::pair<const Key, T> > >
 	class map {
 		public :
-			typedef	Key													key_type;
-			typedef	T													mapped_type;
-			typedef	ft::pair<const Key, T>								value_type;
-			typedef	size_t												size_type;
-			typedef	ptrdiff_t											difference_type;
-			typedef	Compare												key_compare;
-			typedef	Allocator											allocator_type;
-			typedef	value_type&											reference;
-			typedef	const value_type&									const_reference;
-			typedef typename	Allocator::pointer						pointer;
-			typedef typename	Allocator::const_pointer				const_painter;
-			typedef	typename	ft::tree_iterator<value_type, false>	iterator;
-			typedef	typename	ft::tree_iterator<value_type, true>		const_iterator;
-			typedef	typename	ft::reverse_iterator<iterator>			reverse_iterator;
-			typedef	typename	ft::reverse_iterator<const_iterator>	const_reverse_iterator;
-			typedef typename	ft::red_black_tree<value_type>			rbt;
-			typedef typename	ft::RBTnode<value_type>					node_type;
+			typedef	Key															key_type;
+			typedef	T															mapped_type;
+			typedef	ft::pair<key_type, mapped_type>								value_type;
+			typedef	size_t														size_type;
+			typedef	ptrdiff_t													difference_type;
+			typedef	Compare														key_compare;
+			typedef	Allocator													allocator_type;
+			typedef	value_type&													reference;
+			typedef	const value_type&											const_reference;
+			typedef typename	Allocator::pointer								pointer;
+			typedef typename	Allocator::const_pointer						const_painter;
+			typedef	typename	ft::tree_iterator<value_type, false>			iterator;
+			typedef	typename	ft::tree_iterator<value_type, true>				const_iterator;
+			typedef	typename	ft::reverse_iterator<iterator>					reverse_iterator;
+			typedef	typename	ft::reverse_iterator<const_iterator>			const_reverse_iterator;
 
-		class value_compare : ft::binary_function<value_type, value_type, bool> {
-			protected :
-				Compare comp;
-				value_compare(Compare c) : comp(c) {}
-			public :
-				typedef	bool		result_type;
-				typedef	value_type	first_argument_type;
-				typedef	value_type	second_argument_type;
-				value_compare() : comp() {}
-				bool operator()( const value_type& lhs, const value_type& rhs ) const { return comp(lhs.first, rhs.first); }
-		};
+			class value_compare : binary_function<value_type, value_type, bool> {
+				protected :
+					Compare comp;
+					value_compare(Compare c) : comp(c) {}
+				public :
+					typedef	bool		result_type;
+					typedef	value_type	first_argument_type;
+					typedef	value_type	second_argument_type;
+					value_compare() : comp() {}
+					bool operator()( const value_type& lhs, const value_type& rhs ) const { return comp(lhs.first, rhs.first); }
+			};
+
+			typedef typename	ft::red_black_tree<value_type, value_compare>	rbt;
+			typedef typename	ft::RBTnode<value_type>							node_type;
 
 		private :
 			allocator_type	_alloc;
