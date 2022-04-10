@@ -1,7 +1,7 @@
 #ifndef SET_HPP
 # define SET_HPP
 
-# include "utils/less.hpp"
+# include "utils/tree_iterator.hpp"
 # include "utils/reverse_iterator.hpp"
 # include "utils/red_black_tree.hpp"
 # include "utils/is_integral.hpp"
@@ -24,11 +24,11 @@ namespace ft {
 		typedef	const value_type&											const_reference;
 		typedef typename	Allocator::pointer								pointer;
 		typedef typename	Allocator::const_pointer						const_painter;
-		typedef	typename	ft::tree_iterator<value_type, false>			iterator;
+		typedef	typename	ft::tree_iterator<value_type, true>				iterator;
 		typedef	typename	ft::tree_iterator<value_type, true>				const_iterator;
 		typedef	typename	ft::reverse_iterator<iterator>					reverse_iterator;
 		typedef	typename	ft::reverse_iterator<const_iterator>			const_reverse_iterator;
-		typedef	typename	ft::red_black_tree<value_type, value_compare>	rbt;
+		typedef	typename	ft::red_black_tree<value_type, value_compare>			rbt;
 		typedef typename	ft::RBTnode<value_type>							node_type;
 
 	private :
