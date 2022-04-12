@@ -65,7 +65,7 @@ namespace ft {
 					alloc.construct(fin, *first);
 				}
 			}
-			vector( const vector& other ) : start(ft_nullptr), fin(ft_nullptr), alloc(other.alloc), cap(other.cap), len(other.len) {
+			vector( const vector& other ) : start(ft_nullptr), fin(ft_nullptr), alloc(other.alloc), cap(other.size()), len(other.len) {
 				start = alloc.allocate(cap);
 				fin = start;
 				value_type	*tmp = other.start;

@@ -80,7 +80,10 @@ namespace ft {
 			mapped_type& operator[] (const key_type& k) {
 				return (*(_tree.insert(ft::make_pair(k, mapped_type())).first)).value->second;
 			}
-			
+			mapped_type& at (const key_type& k) {
+				return (*(_tree.insert(ft::make_pair(k, mapped_type())).first)).value->second;
+			}
+
 			pair<iterator, bool> insert (const value_type& val) {
 				ft::pair<node_type* , bool> ret = _tree.insert(val);
 				return ft::make_pair(iterator(ret.first), ret.second);
