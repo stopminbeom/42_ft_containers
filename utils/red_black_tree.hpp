@@ -34,6 +34,11 @@ namespace ft {
 				copy(other);
 				_nil->parent = get_max_value_node();
 			}
+			~red_black_tree () {
+				clear();
+				_node_alloc.destroy(_nil);
+				_node_alloc.deallocate(_nil, 1);
+			}
 
 			void	copy(const red_black_tree& c) {
 				clear();

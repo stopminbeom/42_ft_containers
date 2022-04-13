@@ -56,7 +56,9 @@ namespace ft {
 				typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type* = 0 )
 			: _alloc(alloc), _comp(comp), _tree() { insert(first, last); }
 			map( const map& other ) : _alloc(other._alloc), _comp(other._comp), _tree() { *this = other; }
-			~map() {}
+			~map() {
+				clear();
+			}
 
 			map& operator= (const map& x) {
 				if (*this != x)

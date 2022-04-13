@@ -2,6 +2,8 @@
 # define ITERATOR_TRAITS_HPP
 
 # include <cstddef>
+# include "enable_if.hpp"
+# include "is_integral.hpp"
 
 namespace	ft
 {
@@ -53,7 +55,7 @@ namespace	ft
 	};
 
 	template < typename Iter >
-	typename Iter::difference_type	distance( Iter first, Iter last )
+	typename Iter::difference_type	distance( Iter first, Iter last, typename ft::enable_if<!ft::is_integral<Iter>::value, Iter>::type* = 0 )
 	{
 		typename	Iter::difference_type	result = 0;
 		Iter		start(first);
