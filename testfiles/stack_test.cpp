@@ -3,7 +3,7 @@
 	#ifndef TESTED_NAMESPACE
 	#define TESTED_NAMESPACE ft
 	#endif
-	#include "stack.hpp"
+	#include "../stack.hpp"
 #elif TYPE == 1
 	#ifndef TESTED_NAMESPACE
 	#define TESTED_NAMESPACE std

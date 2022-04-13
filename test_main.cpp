@@ -1,6 +1,6 @@
 #include <iostream>
 #include <chrono>
-#include "test_funcs.hpp"
+#include "testfiles/test_funcs.hpp"
 #ifndef TYPE
 #define TYPE    2
 #endif

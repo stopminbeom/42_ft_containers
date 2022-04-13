@@ -3,7 +3,7 @@
 	#ifndef TESTED_NAMESPACE
 	#define TESTED_NAMESPACE ft
 	#endif
-	#include "set.hpp"
+	#include "../set.hpp"
 #elif TYPE == 1
 	#ifndef TESTED_NAMESPACE
 	#define TESTED_NAMESPACE std

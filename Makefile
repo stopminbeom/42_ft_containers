@@ -9,10 +9,10 @@ TESTOUT		=	./TEST
 DIFF		=	./diff
 
 SRC			=	test_main.cpp \
-				vector_test.cpp \
-				stack_test.cpp \
-				map_test.cpp \
-				set_test.cpp
+				./testfiles/vector_test.cpp \
+				./testfiles/stack_test.cpp \
+				./testfiles/map_test.cpp \
+				./testfiles/set_test.cpp
 				
 RM			=	rm -rf
 
